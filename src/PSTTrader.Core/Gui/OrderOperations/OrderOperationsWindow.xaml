@@ -1,0 +1,56 @@
+﻿<Window x:Class="ProSecuritiesTrading.PSTTrader.Core.Gui.OrderOperations.OrderOperationsWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Title="OrderOperations" Height="650" Width="500" MinWidth="500" MinHeight="650" Closed="OrderOperationsWindow_Closed">
+    <Grid>
+        <Button x:Name="btnBuyMarket" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" UseLayoutRounding="False" Click="btnBuyMarket_Click">
+            <ContentControl>
+                <TextBlock Text="   BUY MARKET" TextWrapping="Wrap"/>
+            </ContentControl>
+        </Button>
+        <Button x:Name="btnSellMarket" HorizontalAlignment="Left" Margin="105,10,0,0" VerticalAlignment="Top" Width="75" Click="btnSellMarket_Click">
+            <ContentControl>
+                <TextBlock Text="   SELL MARKET" TextWrapping="Wrap"/>
+            </ContentControl>
+        </Button>
+
+        <Button x:Name="btnBuy" Content="BUY" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="75" Click="btnBuy_Click"/>
+        <Button x:Name="btnSell" Content="SELL" HorizontalAlignment="Left" Margin="105,70,0,0" VerticalAlignment="Top" Width="75" Click="btnSell_Click"/>
+        <Label Content="Instrument:" Margin="10,105,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+        <TextBox x:Name="tbInstrument" HorizontalAlignment="Left" Height="23" Margin="85,105,0,0" VerticalAlignment="Top" Width="120"/>
+        
+        <Label Content="Price:" Margin="38,143,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+        <TextBox x:Name="tbPrice" HorizontalAlignment="Left" Height="23" Margin="85,145,0,0" Text="0" VerticalAlignment="Top" Width="120"/>
+
+        <Label Content="Quantity:" Margin="22,178,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+        <TextBox x:Name="tbQuantity" HorizontalAlignment="Left" Height="23" Margin="85,180,0,0" Text="1" VerticalAlignment="Top" Width="120"/>
+        
+        <Label Content="Account:" HorizontalAlignment="Left" Margin="24,210,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbAccount" HorizontalAlignment="Left" Height="23" Margin="85,213,0,0" VerticalAlignment="Top" Width="120"/>
+
+        <Label Content="Режим торгов (SECBOARD, Type):" HorizontalAlignment="Left" Margin="124,269,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="tbTradingSessionID" HorizontalAlignment="Left" Height="23" Margin="320,272,0,0" VerticalAlignment="Top" Width="120"/>
+
+        <Button x:Name="btnMassCancel" HorizontalAlignment="Left" Margin="15,271,0,0" VerticalAlignment="Top" Width="75" Click="btnMassCancel_Click">
+            <ContentControl>
+                <TextBlock Text="  MASS CANCEL" TextWrapping="Wrap"/>
+            </ContentControl>
+        </Button>
+
+        <Label Content="MassCancelType:" Margin="10,328,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+        <RadioButton x:Name="rbMCT1" Content="Снять заявки по определенному финансовому инструменту" HorizontalAlignment="Left" Margin="34,358,0,0" VerticalAlignment="Top" GroupName="MassCancelType" Checked="rbMCT1_Checked" Unchecked="rbMCT1_Unchecked"/>
+        <Label x:Name="labelMCT1Instrument" Content="Instrument:" Margin="49,379,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"></Label>
+        <TextBox x:Name="tbMCT1Instrument" HorizontalAlignment="Left" Height="23" Margin="124,379,0,0" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+
+        <RadioButton x:Name="rbMCT7" Content="Снять все заявки, которые удовлетворяют параметрам запроса" HorizontalAlignment="Left" Margin="34,418,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="MassCancelType"/>
+        <Button x:Name="btnCancel" Content="CANCEL" HorizontalAlignment="Left" Margin="273,70,0,0" VerticalAlignment="Top" Width="75"/>
+        <CheckBox x:Name="cbMCAccount" Content="Account" HorizontalAlignment="Left" Margin="15,457,0,0" VerticalAlignment="Top" Checked="cbMCAccount_Checked" Unchecked="cbMCAccount_Unchecked"/>
+        <Label x:Name="labelMCAccount" Content="Account:" Margin="34,478,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" IsEnabled="False"></Label>
+        <TextBox x:Name="tbMCAccount" HorizontalAlignment="Left" Height="23" Margin="95,481,0,0" VerticalAlignment="Top" Width="120" IsEnabled="False"/>
+
+        <CheckBox x:Name="cbSide" Content="Side" HorizontalAlignment="Left" Margin="15,526,0,0" VerticalAlignment="Top" Checked="cbSide_Checked" Unchecked="cbSide_Unchecked"/>
+        <RadioButton x:Name="rbBuy" Content="Buy" HorizontalAlignment="Left" Margin="34,547,0,0" VerticalAlignment="Top" GroupName="Side" IsEnabled="False" IsChecked="True"/>
+        <RadioButton x:Name="rbSell" Content="Sell" HorizontalAlignment="Left" Margin="34,568,0,0" VerticalAlignment="Top" GroupName="Side" IsEnabled="False"/>
+
+    </Grid>
+</Window>

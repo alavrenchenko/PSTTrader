@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1547F738-AA72-4EBE-A2C2-25080B50B6B5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ProSecuritiesTrading.PSTTrader.Core</RootNamespace>
+    <AssemblyName>PSTTrader.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Adapter\IAdapter.cs" />
+    <Compile Include="Adapter\IFundamentalData.cs" />
+    <Compile Include="Adapter\ILoader.cs" />
+    <Compile Include="Adapter\IMarketData.cs" />
+    <Compile Include="Adapter\IMarketDepth.cs" />
+    <Compile Include="Adapter\IOrder.cs" />
+    <Compile Include="Base\Account.cs" />
+    <Compile Include="Base\Connection.cs" />
+    <Compile Include="Base\ConnectionCollection.cs" />
+    <Compile Include="Base\ConnectionSettings.cs" />
+    <Compile Include="Base\ConnectionStatus.cs" />
+    <Compile Include="Base\ConnectionStatusEventArgs.cs" />
+    <Compile Include="Base\ConnectionStatusEventHandler.cs" />
+    <Compile Include="Base\Currency.cs" />
+    <Compile Include="Base\ErrorCode.cs" />
+    <Compile Include="Base\Exchange.cs" />
+    <Compile Include="Base\Feature.cs" />
+    <Compile Include="Base\Globals.cs" />
+    <Compile Include="Base\Instrument.cs" />
+    <Compile Include="Base\InstrumentType.cs" />
+    <Compile Include="Connection\ConnectionItem.cs" />
+    <Compile Include="Connection\ManagingConnections.xaml.cs">
+      <DependentUpon>ManagingConnections.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\MarketDataType.cs" />
+    <Compile Include="Base\Operation.cs" />
+    <Compile Include="Base\OptionType.cs" />
+    <Compile Include="Base\Order.cs" />
+    <Compile Include="Base\OrderSide.cs" />
+    <Compile Include="Base\OrderState.cs" />
+    <Compile Include="Base\OrderType.cs" />
+    <Compile Include="Base\Provider.cs" />
+    <Compile Include="Data\FundamentalData.cs" />
+    <Compile Include="Data\MarketData.cs" />
+    <Compile Include="Data\MarketDataEventArgs.cs" />
+    <Compile Include="Data\MarketDataItemEventHandler.cs" />
+    <Compile Include="Data\MarketDepth.cs" />
+    <Compile Include="Data\MarketDepthEventArgs.cs" />
+    <Compile Include="Data\MarketDepthItemEventHandler.cs" />
+    <Compile Include="Data\MarketDepthRow.cs" />
+    <Compile Include="Gui\OrderOperations\OrderOperationsWindow.xaml.cs">
+      <DependentUpon>OrderOperationsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Output\OutputEventArgs.cs" />
+    <Compile Include="Output\OutputEventHandler.cs" />
+    <Compile Include="Output\OutputWindow.xaml.cs">
+      <DependentUpon>OutputWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Connection\ManagingConnections.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\OrderOperations\OrderOperationsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Output\OutputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Gui\TimeAndSales\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
