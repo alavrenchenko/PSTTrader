@@ -15,10 +15,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using ProSecuritiesTrading.PSTTrader.Core.Output;
 using ProSecuritiesTrading.MOEX.FIX.Base.Field;
@@ -49,7 +45,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
         /// <summary>
         /// Сборка: x64, Оптимизированный код.
         /// </summary>
-        public unsafe static byte[] UnsafeGetBytes(ProSecuritiesTrading.MOEX.FIX.Base.Group.Header header, int msgSeqNum, bool origSendingTime)
+        public unsafe static byte[] UnsafeGetBytes(ProSecuritiesTrading.MOEX.FIX.Base.Group.Header header, int msgSeqNum, bool origSendingTime, byte[] origClOrdID, byte[] orderID, byte[] clOrdID, byte side)
         {
             /*
              * <Header>
@@ -64,9 +60,15 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
              *  SendingTime = 8
              *  OrigSendingTime = 9
              * </Header>
-             *  Text = 10
+             * 
+             * OrigClOrdID = 10
+             * OrderID = 11
+             * ClOrdID = 12
+             * Side = 13
+             * TransactTime = 14
+             * 
              * <Trailer>
-             *  CheckSum = 11
+             *  CheckSum = 15
              * </Trailer>
              * */
 
@@ -77,9 +79,19 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
 
             byte[] sendingTimeValue = DateTimeConverter.GetBytes(DateTime.UtcNow.Ticks);
 
+            // TransactTime = SendingTime
+
             // TagValue.Length without SOH.
             // ((TagValue) ? Length : 0) with SOH.
-            int bodyLengthValue = MsgTypeBytes.Length + header.SenderAndTargetCompIDWithSOH.Length + msgSeqNumLength + ((header.PossDupFlag > 0) ? 5 : 0) + ((header.PossResend > 0) ? 5 : 0) + (sendingTimeValue.Length + 3) + ((origSendingTime == true) ? (sendingTimeValue.Length + 5) : 0) + 3;
+            int headerLength = MsgTypeBytes.Length + header.SenderAndTargetCompIDWithSOH.Length + msgSeqNumLength + ((header.PossDupFlag > 0) ? 5 : 0) + ((header.PossResend > 0) ? 5 : 0) + (sendingTimeValue.Length + 3) + ((origSendingTime == true) ? (sendingTimeValue.Length + 5) : 0) + 3;
+
+            // TagValue.Length without SOH.
+            // ((TagValue) ? Length : 0) with SOH.
+            // Side.Length = 5. With SOH.
+            // TransactTime = SendingTime.
+            int baseLength = ((origClOrdID != null) ? (origClOrdID.Length + 4) : 0) + ((orderID != null) ? (orderID.Length + 4) : 0) + (clOrdID.Length + 3) + 5 + (sendingTimeValue.Length + 3) + 2;
+
+            int bodyLengthValue = headerLength + baseLength;
             byte[] bodyLengthValueBytes = StringConverter.FormatUInt32(bodyLengthValue);
 
             byte[] bytes = new byte[BeginString.BeginStringBytes.Length + bodyLengthValueBytes.Length + 2 + bodyLengthValue + CheckSum.WithSOHLength + 2];
@@ -178,7 +190,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                 dBytes++;
                 *dBytes = 61; // =
                 dBytes++;
-                *dBytes = 53; // 5
+                *dBytes = 70; // F
                 dBytes++;
 
                 *dBytes = Messages.SOH;
@@ -332,13 +344,166 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
 
                 // </Header>
 
+                if (origClOrdID != null)
+                {
+                    *dBytes = 52; // 4
+                    dBytes++;
+                    *dBytes = 49; // 1
+                    dBytes++;
+                    *dBytes = 61; // =
+                    dBytes++;
+                    index += 3;
+
+                    fixed (byte* pOrigClOrdID = origClOrdID)
+                    {
+                        length = origClOrdID.Length;
+
+                        if (length == 20)
+                        {
+                            *(Decimal*)dBytes = unchecked(*(Decimal*)pOrigClOrdID);
+                            dBytes += 16;
+                            *(Int32*)dBytes = unchecked(*(Int32*)(pOrigClOrdID + 16));
+                            dBytes += 4;
+                        }
+                        else
+                        {
+                            Messages.BytesCopy(dBytes, pOrigClOrdID, length);
+                            dBytes += length;
+                        }
+
+                        index += length;
+                    }
+
+                    *dBytes = Messages.SOH;
+                    dBytes++;
+                    index++;
+                }
+
+                if (orderID != null)
+                {
+                    *dBytes = 51; // 3
+                    dBytes++;
+                    *dBytes = 55; // 7
+                    dBytes++;
+                    *dBytes = 61; // =
+                    dBytes++;
+                    index += 3;
+
+                    fixed (byte* pOrderID = orderID)
+                    {
+                        length = orderID.Length;
+
+                        if (length == 12)
+                        {
+                            *(Int64*)dBytes = unchecked(*(Int64*)pOrderID);
+                            dBytes += 8;
+                            *(Int32*)dBytes = unchecked(*(Int32*)(pOrderID + 8));
+                            dBytes += 4;
+                        }
+                        else
+                        {
+                            byte* orderIDBytes = pOrderID;
+                            pEnd = orderIDBytes + length;
+
+                            if (length > 4)
+                            {
+                                count = length / 4;
+
+                                for (x = 0; x < count; x++)
+                                {
+                                    *(Int32*)dBytes = unchecked(*(Int32*)orderIDBytes);
+                                    dBytes += 4;
+                                    orderIDBytes += 4;
+                                }
+                            }
+
+                            while (orderIDBytes < pEnd)
+                            {
+                                *dBytes = unchecked(*orderIDBytes);
+                                dBytes++;
+                                orderIDBytes++;
+                            }
+                        }
+
+                        index += length;
+                    }
+
+                    *dBytes = Messages.SOH;
+                    dBytes++;
+                    index++;
+                }
+
+                *dBytes = 49; // 1
+                dBytes++;
+                *dBytes = 49; // 1
+                dBytes++;
+                *dBytes = 61; // =
+                dBytes++;
+                index += 3;
+
+                fixed (byte* pClOrdID = clOrdID)
+                {
+                    length = clOrdID.Length;
+
+                    if (length == 20)
+                    {
+                        *(Decimal*)dBytes = unchecked(*(Decimal*)pClOrdID);
+                        dBytes += 16;
+                        *(Int32*)dBytes = unchecked(*(Int32*)(pClOrdID + 16));
+                        dBytes += 4;
+                    }
+                    else
+                    {
+                        Messages.BytesCopy(dBytes, pClOrdID, length);
+                        dBytes += length;
+                    }
+
+                    index += length;
+                }
+
+                *dBytes = Messages.SOH;
+                dBytes++;
+                index++;
+
+                *dBytes = 53; // 5
+                dBytes++;
+                *dBytes = 52; // 4
+                dBytes++;
+                *dBytes = 61; // =
+                dBytes++;
+                *dBytes = side;
+                dBytes++;
+                *dBytes = Messages.SOH;
+                dBytes++;
+                index += 5;
+
+                *dBytes = 54; // 6
+                dBytes++;
+                *dBytes = 48; // 0
+                dBytes++;
+                *dBytes = 61; // =
+                dBytes++;
+                index += 3;
+
+                fixed (byte* pTTVBytes = sendingTimeValue)
+                {
+                    length = sendingTimeValue.Length;
+                    Messages.SendingTimeCopy(dBytes, pTTVBytes, length);
+                    dBytes += length;
+                    index += length;
+                }
+
+                *dBytes = Messages.SOH;
+                dBytes++;
+                index++;
+
                 // <Trailer>
 
                 int sumValue = 0;
                 byte* srcBytes = pBytes;
                 pEnd = srcBytes + index;
 
-                while (srcBytes <= pEnd)
+                while (srcBytes < pEnd)
                 {
                     sumValue += *srcBytes;
                     srcBytes++;

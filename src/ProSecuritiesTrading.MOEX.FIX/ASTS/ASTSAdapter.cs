@@ -42,6 +42,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.ASTS
         private bool canConnect = true;
         private bool canDisconnect = false;
         internal ProSecuritiesTrading.MOEX.FIX.Base.Service.MFIXTransactional MFIXTransactional;
+        private byte marketType;
         private bool disposed = false;
         private object onConnectedLock = new object();
 
@@ -51,6 +52,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.ASTS
             this.connection = connection;
 
             this.MFIXTransactional = new MFIXTransactional(this);
+            this.marketType = ((ProSecuritiesTrading.MOEX.FIX.ASTS.ASTSSettings)this.connection.ConnectionSettings).MarketType;
         }
 
         public void ClientError(byte serviceId, ErrorCode errorCode, ConnectionStatus status)
@@ -152,6 +154,42 @@ namespace ProSecuritiesTrading.MOEX.FIX.ASTS
         {
         }
 
+        public void Cancel(string origClOrdID, string orderID, byte orderSide)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            byte[] clOrdID = StringConverter.GetBytes(DateTime.UtcNow.Ticks.ToString());
+
+            if ((origClOrdID != null) && (orderID != null))
+            {
+                origClOrdID = null;
+            }
+
+            byte[] origClOrdIDBytes = null;
+            byte[] orderIDBytes = null;
+
+            if (origClOrdID != null)
+            {
+                origClOrdIDBytes = StringConverter.GetBytes(origClOrdID);
+            }
+            else
+            {
+                orderIDBytes = StringConverter.GetBytes(orderID);
+            }
+
+            byte side = (orderSide == 0) ? Side.Value1 : Side.Value2;
+
+            byte[] messageBytes = Base.Message.ASTS.OrderCancelRequest.UnsafeGetBytes(this.MFIXTransactional.MFIXTrade.Messages.Header, this.MFIXTransactional.MFIXTrade.Messages.NextClientMsgSeqNum, false, origClOrdIDBytes, orderIDBytes, clOrdID, side);
+            
+            stopwatch.Stop();
+
+            this.MFIXTransactional.MFIXTrade.Messages.ClientMessages.Add(this.MFIXTransactional.MFIXTrade.Messages.CurrentClientMsgSeqNum, messageBytes);
+            this.MFIXTransactional.MFIXTrade.Client.Send(messageBytes);
+
+            OutputEventArgs.ProcessEventArgs(new OutputEventArgs("Sent:\nMFIXTrade, OrderCancelRequest:\n   Bytes:\n      Length: " + messageBytes.Length.ToString() + "\n      Elapsed time, ticks: " + stopwatch.ElapsedTicks.ToString() + "\n   Message: " + Encoding.UTF8.GetString(messageBytes) + "\n   Time: " + StringConverter.GetString(DateTimeConverter.GetBytes(DateTime.Now.Ticks)) + "\n"));
+        }
+
         public void MassCancel(string account, string instrumentName, byte secboardType, byte orderSide)
         {
             if ((secboardType != 255) && (secboardType >= Base.Boards.BoardsBytes.Length))
@@ -176,12 +214,15 @@ namespace ProSecuritiesTrading.MOEX.FIX.ASTS
 
             byte product = 0;
 
-            //bool cfiCode = false;
-            //byte[] securityType = null;
+            bool cfiCode = false;
+            byte[] securityType = null;
 
             // Currency (FX) market
-            bool cfiCode = true;
-            byte[] securityType = SecurityType.SecurityTypeFXSPOTWithSOH;
+            if (this.marketType == 1)
+            {
+                cfiCode = true;
+                securityType = SecurityType.SecurityTypeFXSPOTWithSOH;
+            }
 
             byte side = 0;
 
@@ -227,12 +268,15 @@ namespace ProSecuritiesTrading.MOEX.FIX.ASTS
             byte[] symbol = StringConverter.GetBytes(order.InstrumentName);
             byte product = 0;
 
-            //bool cfiCode = false;
-            //byte[] securityType = null;
+            bool cfiCode = false;
+            byte[] securityType = null;
 
             // Currency (FX) market
-            bool cfiCode = true;
-            byte[] securityType = SecurityType.SecurityTypeFXSPOTWithSOH;
+            if (this.marketType == 1)
+            {
+                cfiCode = true;
+                securityType = SecurityType.SecurityTypeFXSPOTWithSOH;
+            }
 
             byte side = (order.OrderSide == OrderSide.Buy) ? Side.Value1 : Side.Value2;
             int orderQty = order.Quantity;

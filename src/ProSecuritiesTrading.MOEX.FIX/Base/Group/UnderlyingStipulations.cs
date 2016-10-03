@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ProSecuritiesTrading.MOEX.FIX.Base.Group
 {
-    class UnderlyingStipulations
+    public class UnderlyingStipulations
     {
+
     }
 }

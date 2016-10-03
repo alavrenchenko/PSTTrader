@@ -190,26 +190,34 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Service
                         {
                             index++;
 
-                            if (bytes[index + 1] == 69) // AE (Trade Capture Report)
+                            if (bytes[index] == 69) // AE (Trade Capture Report)
                             {
-                                index++;
-
                                 if (bytes[index + 1] != 1)
                                 {
                                     // Error
                                     return;
                                 }
 
+                                index += 2;
+
+                                stopwatch.Start();
+                                TradeCaptureReportData tcrData = Base.Message.ASTS.TradeCaptureReport.GetTradeCaptureReportData(bytes, index);
+                                stopwatch.Stop();
+
+                                base.Messages.ServerMessages.Add(tcrData.Header.MsgSeqNum, tcrData.MessageBytes);
+                                msgSeqNum = tcrData.Header.MsgSeqNum;
+
+                                OutputEventArgs.ProcessEventArgs(new OutputEventArgs("Received:\nMFIXTradeCapture, Trade Capture Report:\n   Bytes:\n      Length: " + tcrData.MessageBytes.Length.ToString() + "\n      Elapsed time, ticks: " + stopwatch.ElapsedTicks.ToString() + "\n   Header:\n      MsgType: " + tcrData.Header.MsgType + "\n      SenderCompID: " + tcrData.Header.SenderCompID + "\n      TargetCompID: " + tcrData.Header.TargetCompID.ToString() + "\n      MsgSeqNum: " + tcrData.Header.MsgSeqNum.ToString() + "\n      PossDupFlag: " + tcrData.Header.PossDupFlag.ToString() + "\n      PossResend: " + tcrData.Header.PossResend.ToString() + "\n      SendingTime: " + StringConverter.GetString(DateTimeConverter.GetBytes(tcrData.Header.SendingTime.Ticks)) + "\n      OrigSendingTime: " + StringConverter.GetString(DateTimeConverter.GetBytes(tcrData.Header.OrigSendingTime.Ticks)) + "\n   Trailer\n      CheckSum: " + tcrData.CheckSum.ToString() + "\n   Message: " + StringConverter.GetString(tcrData.MessageBytes) + "\n   Time: " + StringConverter.GetString(DateTimeConverter.GetBytes(DateTime.Now.Ticks)) + "\n"));
                             }
                             else // A (Logon)
                             {
-                                if (bytes[index + 1] != 1)
+                                if (bytes[index] != 1)
                                 {
                                     // Error
-                                    break;
+                                    return;
                                 }
 
-                                index += 2;
+                                index++;
 
                                 stopwatch.Start();
 
@@ -238,6 +246,16 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Service
                         }
                     case 104: // h (Trading Session Status)
                         {
+                            index += 2;
+
+                            stopwatch.Start();
+                            TradingSessionStatusData tssData = Base.Message.ASTS.TradingSessionStatus.GetTradingSessionStatusData(bytes, index);
+                            stopwatch.Stop();
+
+                            base.Messages.ServerMessages.Add(tssData.Header.MsgSeqNum, tssData.MessageBytes);
+                            msgSeqNum = tssData.Header.MsgSeqNum;
+
+                            OutputEventArgs.ProcessEventArgs(new OutputEventArgs("Received:\nMFIXTradeCapture, Trading Session Status:\n   Bytes:\n      Length: " + tssData.MessageBytes.Length.ToString() + "\n      Elapsed time, ticks: " + stopwatch.ElapsedTicks.ToString() + "\n   Header:\n      MsgType: " + tssData.Header.MsgType + "\n      SenderCompID: " + tssData.Header.SenderCompID + "\n      TargetCompID: " + tssData.Header.TargetCompID.ToString() + "\n      MsgSeqNum: " + tssData.Header.MsgSeqNum.ToString() + "\n      PossDupFlag: " + tssData.Header.PossDupFlag.ToString() + "\n      PossResend: " + tssData.Header.PossResend.ToString() + "\n      SendingTime: " + StringConverter.GetString(DateTimeConverter.GetBytes(tssData.Header.SendingTime.Ticks)) + "\n      OrigSendingTime: " + StringConverter.GetString(DateTimeConverter.GetBytes(tssData.Header.OrigSendingTime.Ticks)) + "\n   Trailer\n      CheckSum: " + tssData.CheckSum.ToString() + "\n   Message: " + StringConverter.GetString(tssData.MessageBytes) + "\n   Time: " + StringConverter.GetString(DateTimeConverter.GetBytes(DateTime.Now.Ticks)) + "\n"));
 
                             break;
                         }

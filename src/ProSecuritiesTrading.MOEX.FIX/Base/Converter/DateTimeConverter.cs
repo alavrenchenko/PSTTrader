@@ -52,10 +52,8 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Converter
         private const long MinTicks = 0;
         private const long MaxTicks = DaysTo10000 * TicksPerDay - 1;
 
-        private static readonly int[] DaysToMonth365 = {
-            0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365};
-        private static readonly int[] DaysToMonth366 = {
-            0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366};
+        private static readonly int[] DaysToMonth365 = { 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
+        private static readonly int[] DaysToMonth366 = { 0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366 };
 
         static DateTimeConverter()
         {
@@ -145,14 +143,21 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Converter
         }
 
         /// <summary>
-        /// UTCTimestamp. Format: yyyyMMdd-HH:mm:ss.fff
+        /// UTCTimestamp. Format: yyyyMMdd-HH:mm:ss or yyyyMMdd-HH:mm:ss.fff
         /// </summary>
         public static bool ParseDateTime(byte[] bytes, out Int64 ticks)
         {
             ticks = 0;
             int length = bytes.Length;
 
-            if ((length != 21) || (bytes[8] != 45) || (bytes[11] != 58) || (bytes[14] != 58) || (bytes[17] != 46))
+            if (length == 21)
+            {
+                if ((bytes[8] != 45) || (bytes[11] != 58) || (bytes[14] != 58) || (bytes[17] != 46))
+                {
+                    return false;
+                }
+            }
+            else if ((length != 17) || (bytes[8] != 45) || (bytes[11] != 58) || (bytes[14] != 58))
             {
                 return false;
             }
@@ -257,23 +262,31 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Converter
             }
             while (index < 17);
 
-            index++;
-
-            do
+            if (length == 21)
             {
-                byteValue = bytes[index];
+                index++;
 
-                if ((byteValue < 48) || (byteValue > 57))
+                do
+                {
+                    byteValue = bytes[index];
+
+                    if ((byteValue < 48) || (byteValue > 57))
+                    {
+                        return false;
+                    }
+
+                    millisecond = (millisecond * 10) + (byteValue - 48);
+                    index++;
+                }
+                while (index < 21);
+
+                if (millisecond > 999)
                 {
                     return false;
                 }
-
-                millisecond = (millisecond * 10) + (byteValue - 48);
-                index++;
             }
-            while (index < 21);
 
-            if ((year < 1) || (year > 9999) || (month < 1) || (month > 12) || (hour > 23) || (minute > 59) || (second > 59) || (millisecond > 999))
+            if ((year < 1) || (year > 9999) || (month < 1) || (month > 12) || (hour > 23) || (minute > 59) || (second > 59))
             {
                 return false;
             }

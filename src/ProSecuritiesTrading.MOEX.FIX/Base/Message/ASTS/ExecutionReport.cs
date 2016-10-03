@@ -15,10 +15,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 using ProSecuritiesTrading.PSTTrader.Core.Output;
 using ProSecuritiesTrading.MOEX.FIX.Base.Field;
@@ -216,16 +213,16 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                         }
                                     case 51: // 3
                                         {
-                                            if (buffer[index] == 54) // 6 (NoMiscFees(136))
+                                            if (buffer[index] == 54) // 6 (NoMiscFees (136))
                                             {
                                                 index += 2;
                                                 valueBytes = Messages.GetValueBytes(buffer, index);
                                                 Int32 noMiscFees = 0;
-                                                List<MiscFeeData> miscFees = null;
+                                                MiscFeeData[] miscFees = null;
 
                                                 if ((IntConverter.ParsePositiveInt32(valueBytes, out noMiscFees) == true) && (noMiscFees > 0))
                                                 {
-                                                    miscFees = new List<MiscFeeData>(noMiscFees);
+                                                    miscFees = new MiscFeeData[noMiscFees];
                                                 }
 
                                                 index += valueBytes.Length;
@@ -241,7 +238,8 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                                 int miscFeeType = 0;
                                                 bool mfa = false;
                                                 bool mft = false;
-                                                x = 1;
+                                                x = 0;
+                                                int number = noMiscFees - 1;
 
                                             Label_1:
                                                 if ((buffer[index + 1] == 49) && (buffer[index + 2] == 51) && (buffer[index + 4] == 61))
@@ -303,9 +301,9 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
 
                                                     if ((mfa == true) && (mft == true))
                                                     {
-                                                        miscFees.Add(new MiscFeeData(miscFeeAmt, miscFeeType));
+                                                        miscFees[x] = new MiscFeeData(miscFeeAmt, miscFeeType);
 
-                                                        if (x < noMiscFees)
+                                                        if (x < number)
                                                         {
                                                             mfa = false;
                                                             mft = false;
@@ -610,7 +608,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                         boolValue = false;
                                     }
                                 }
-                                else if ((byteValue == 50) && (buffer[index] == 51)) // 23 // (PriceType (423))
+                                else if ((byteValue == 50) && (buffer[index] == 51)) // 23 (PriceType (423))
                                 {
                                     index += 2;
 
@@ -632,11 +630,11 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                     index += 2;
                                     valueBytes = Messages.GetValueBytes(buffer, index);
                                     Int32 noPartyID = 0;
-                                    List<PartyData> parties = null;
+                                    PartyData[] parties = null;
 
                                     if ((IntConverter.ParsePositiveInt32(valueBytes, out noPartyID) == true) && (noPartyID > 0))
                                     {
-                                        parties = new List<PartyData>(noPartyID);
+                                        parties = new PartyData[noPartyID];
                                     }
 
                                     index += valueBytes.Length;
@@ -651,7 +649,8 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                     string partyID = null;
                                     byte partyIDSource = 0;
                                     int partyRole = -1;
-                                    x = 1;
+                                    x = 0;
+                                    int number2 = noPartyID - 1;
 
                                 Label_2:
                                     byte byteValue2 = buffer[index + 2];
@@ -743,9 +742,9 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
 
                                         if ((partyID != null) && (partyIDSource > 0) && (partyRole > -1))
                                         {
-                                            parties.Add(new PartyData(partyID, partyIDSource, partyRole));
+                                            parties[x] = new PartyData(partyID, partyIDSource, partyRole);
 
-                                            if (x < noPartyID)
+                                            if (x < number2)
                                             {
                                                 partyID = null;
                                                 partyIDSource = 0;
@@ -1403,11 +1402,11 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                 index += 3;
                                 valueBytes = Messages.GetValueBytes(buffer, index);
                                 Int32 noTrdRegTimestamps = 0;
-                                List<TrdRegTimestampData> trdRegTimestamps = null;
+                                TrdRegTimestampData[] trdRegTimestamps = null;
 
                                 if ((IntConverter.ParsePositiveInt32(valueBytes, out noTrdRegTimestamps) == true) && (noTrdRegTimestamps > 0))
                                 {
-                                    trdRegTimestamps = new List<TrdRegTimestampData>(noTrdRegTimestamps);
+                                    trdRegTimestamps = new TrdRegTimestampData[noTrdRegTimestamps];
                                 }
 
                                 index += valueBytes.Length;
@@ -1421,7 +1420,8 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
 
                                 Int64 trdRegTimestampTicks = -1;
                                 int trdRegTimestampType = -1;
-                                x = 1;
+                                x = 0;
+                                int number3 = noTrdRegTimestamps - 1;
 
                             Label_3:
                                 byteValue = buffer[index + 2];
@@ -1489,9 +1489,9 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                     continue;
                                 }
 
-                                trdRegTimestamps.Add(new TrdRegTimestampData(new DateTime(trdRegTimestampTicks), trdRegTimestampType));
+                                trdRegTimestamps[x] = new TrdRegTimestampData(new DateTime(trdRegTimestampTicks), trdRegTimestampType);
 
-                                if (x < noTrdRegTimestamps)
+                                if (x < number3)
                                 {
                                     trdRegTimestampTicks = -1;
                                     trdRegTimestampType = -1;
@@ -1563,6 +1563,21 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                     boolValue = false;
                                     break;
                                 }
+
+                                index += 2;
+
+                                if (buffer[index + 1] != Messages.SOH)
+                                {
+                                    if (buffer[index] != Messages.SOH)
+                                    {
+                                        boolValue = false;
+                                    }
+
+                                    break;
+                                }
+
+                                headerData.PossResend = buffer[index];
+                                index++;
                             }
                             else
                             {
@@ -1670,39 +1685,6 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                                         boolValue = false;
                                         continue;
                                 }
-                            }
-
-                            if (buffer[index + 1] != 61)
-                            {
-                                if (buffer[index] == 55) // 7 (PossResend (97))
-                                {
-                                    index += 2;
-
-                                    if (buffer[index + 1] != Messages.SOH)
-                                    {
-                                        if (buffer[index] != Messages.SOH)
-                                        {
-                                            boolValue = false;
-                                        }
-
-                                        break;
-                                    }
-
-                                    headerData.PossResend = buffer[index];
-                                    index++;
-                                }
-                            }
-                            else if (buffer[index + 3] == 61)
-                            {
-                                switch (buffer[index])
-                                {
-
-                                }
-                            }
-                            else
-                            {
-                                // Error
-                                boolValue = false;
                             }
 
                             break;

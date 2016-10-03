@@ -15,10 +15,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 
 using ProSecuritiesTrading.PSTTrader.Core.Output;
@@ -54,7 +50,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
         /// <param name="sClOID">SecondaryClOrdID.</param>
         /// <param name="tSID">TradingSessionID.</param>
         /// <param name="product">Null: 0.</param>
-        /// <param name="cfiCode">Null: false</param>
+        /// <param name="cfiCode">Null: false.</param>
         /// <param name="st">SecurityType.</param>
         /// <param name="oq">OrderQty. Null: 0.</param>
         /// <param name="coq">CashOrderQty. Null: 0.0.</param>
@@ -1187,7 +1183,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                 byte* srcBytes = pBytes;
                 pEnd = srcBytes + index;
 
-                while (srcBytes <= pEnd)
+                while (srcBytes < pEnd)
                 {
                     sumValue += *srcBytes;
                     srcBytes++;
@@ -1223,6 +1219,5 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
         {
             return new byte[0];
         }
-
     }
 }

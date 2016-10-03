@@ -341,6 +341,11 @@ namespace ProSecuritiesTrading.PSTTrader.Core.Base
             }
         }
 
+        public void ProcessOrderCancel(string origClOrdID, string orderID, byte orderSide)
+        {
+            this.adapterOrder.Cancel(origClOrdID, orderID, orderSide);
+        }
+
         public void ProcessOrderMassCancel(string account, string instrumentName, byte secboardType, byte orderSide)
         {
             this.adapterOrder.MassCancel(account, instrumentName, secboardType, orderSide);

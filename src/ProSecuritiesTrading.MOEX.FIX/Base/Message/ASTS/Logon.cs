@@ -15,10 +15,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 
 using ProSecuritiesTrading.PSTTrader.Core.Output;
@@ -1043,7 +1040,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
                 byte* srcBytes = pBytes;
                 pEnd = srcBytes + index;
 
-                while (srcBytes <= pEnd)
+                while (srcBytes < pEnd)
                 {
                     sumValue += *srcBytes;
                     srcBytes++;
@@ -1418,7 +1415,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
 
             int sumValue = 0;
 
-            for (x = 0; x <= index; x++)
+            for (x = 0; x < index; x++)
             {
                 sumValue += bytes[x];
             }

@@ -163,6 +163,16 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Service
                 {
                     case 56: // 8 (Execution Report)
                         {
+                            index += 2;
+
+                            stopwatch.Start();
+                            ExecutionReportData erData = Base.Message.ASTS.ExecutionReport.GetExecutionReportData(bytes, index);
+                            stopwatch.Stop();
+
+                            base.Messages.ServerMessages.Add(erData.Header.MsgSeqNum, erData.MessageBytes);
+                            msgSeqNum = erData.Header.MsgSeqNum;
+
+                            OutputEventArgs.ProcessEventArgs(new OutputEventArgs("Received:\nMFIXDropCopy, Execution Report:\n   Bytes:\n      Length: " + erData.MessageBytes.Length.ToString() + "\n      Elapsed time, ticks: " + stopwatch.ElapsedTicks.ToString() + "\n   Header:\n      MsgType: " + erData.Header.MsgType + "\n      SenderCompID: " + erData.Header.SenderCompID + "\n      TargetCompID: " + erData.Header.TargetCompID.ToString() + "\n      MsgSeqNum: " + erData.Header.MsgSeqNum.ToString() + "\n      PossDupFlag: " + erData.Header.PossDupFlag.ToString() + "\n      PossResend: " + erData.Header.PossResend.ToString() + "\n      SendingTime: " + StringConverter.GetString(DateTimeConverter.GetBytes(erData.Header.SendingTime.Ticks)) + "\n      OrigSendingTime: " + StringConverter.GetString(DateTimeConverter.GetBytes(erData.Header.OrigSendingTime.Ticks)) + "\n   Trailer\n      CheckSum: " + erData.CheckSum.ToString() + "\n   Message: " + StringConverter.GetString(erData.MessageBytes) + "\n   Time: " + StringConverter.GetString(DateTimeConverter.GetBytes(DateTime.Now.Ticks)) + "\n"));
 
                             break;
                         }

@@ -169,24 +169,6 @@ namespace ProSecuritiesTrading.PSTTrader.Core.Gui.OrderOperations
             }
 
             this.connection.ProcessOrder(new Order(this.tbAccount.Text, this.tbInstrument.Text, secboardType, price, quantity, OrderState.Initialized, OrderType.Limit, orderSide));
-            /*
-            string account = this.tbAccount.Text;
-            string instrument = this.tbInstrument.Text;
-
-            for (int x = 0; x < 10000; x++)
-            {
-                try
-                {
-                    this.connection.ProcessOrder(new Order(account + x.ToString("0000"), instrument, secboardType, price, quantity, OrderState.Initialized, OrderType.Limit, orderSide));
-                }
-                catch (Exception e)
-                {
-                    OutputEventArgs.ProcessEventArgs(new OutputEventArgs("Error: " + e.ToString() + "\n"));
-                }
-
-                System.Threading.Thread.Sleep(1);
-            }
-            */
         }
 
         private void btnMassCancel_Click(object sender, RoutedEventArgs e)
@@ -196,7 +178,7 @@ namespace ProSecuritiesTrading.PSTTrader.Core.Gui.OrderOperations
 
             string instrument = null;
             byte secboardType = 255;
-            OutputEventArgs.ProcessEventArgs(new OutputEventArgs("11\n"));
+
             try
             {
                 if ((this.rbMCT1.IsChecked == true) && (string.IsNullOrWhiteSpace(this.tbMCT1Instrument.Text) == false))
@@ -204,7 +186,6 @@ namespace ProSecuritiesTrading.PSTTrader.Core.Gui.OrderOperations
                     instrument = this.tbMCT1Instrument.Text;
                 }
 
-                OutputEventArgs.ProcessEventArgs(new OutputEventArgs("22\n"));
                 if ((this.cbMCAccount.IsChecked == true) && (string.IsNullOrWhiteSpace(this.tbMCAccount.Text) == false))
                 {
                     account = this.tbMCAccount.Text;
@@ -215,7 +196,6 @@ namespace ProSecuritiesTrading.PSTTrader.Core.Gui.OrderOperations
                     return;
                 }
 
-                OutputEventArgs.ProcessEventArgs(new OutputEventArgs("33\n"));
                 if (this.cbSide.IsChecked == true)
                 {
                     side = (byte)((this.rbBuy.IsChecked == true) ? 0 : 1);
@@ -225,7 +205,7 @@ namespace ProSecuritiesTrading.PSTTrader.Core.Gui.OrderOperations
             }
             catch (Exception ex)
             {
-                OutputEventArgs.ProcessEventArgs(new OutputEventArgs("btnMassCancel_Click, Error: " + e.ToString() + "\n"));
+                OutputEventArgs.ProcessEventArgs(new OutputEventArgs("btnMassCancel_Click, Error: " + ex.ToString() + "\n"));
             }
         }
 
@@ -268,6 +248,29 @@ namespace ProSecuritiesTrading.PSTTrader.Core.Gui.OrderOperations
         private void OrderOperationsWindow_Closed(object sender, EventArgs e)
         {
             Globals.Connections.ConnectionStatus -= Connections_ConnectionStatus;
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            string origClOrdID = null;
+            string orderID = null;
+
+            if (string.IsNullOrWhiteSpace(this.tbOrigClOrdID.Text) == false)
+            {
+                origClOrdID = this.tbOrigClOrdID.Text;
+            }
+
+            if (string.IsNullOrWhiteSpace(this.tbOrderID.Text) == false)
+            {
+                orderID = this.tbOrderID.Text;
+            }
+
+            if ((origClOrdID == null) && (orderID == null))
+            {
+                return;
+            }
+
+            this.connection.ProcessOrderCancel(origClOrdID, orderID, (byte)((this.rbCancelBuy.IsChecked == true) ? 0 : 1));
         }
     }
 }

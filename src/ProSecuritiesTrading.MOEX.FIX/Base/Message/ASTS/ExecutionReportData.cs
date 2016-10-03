@@ -15,7 +15,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 
 using ProSecuritiesTrading.MOEX.FIX.Base.Group;
 using ProSecuritiesTrading.MOEX.FIX.Base.Group.Data;
@@ -36,7 +35,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
         public string OrigClOrdID = null;
         public byte[] OrigClOrdIDBytes = null;
 
-        public List<PartyData> Parties = null;
+        public PartyData[] Parties = null;
 
         public string ExecID = null;
         public byte[] ExecIDBytes = null;
@@ -87,7 +86,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
         public int CumQty = 0;
         public double AvgPx = 0.0;
         public DateTime TransactTime = DateTime.MinValue;
-        public int OrigTime = 0;
+        public int OrigTime = -1;
         public string CurrencyCode = null;
         public byte[] CurrencyCodeBytes = null;
         public string InstitutionID = null;
@@ -111,9 +110,9 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
         public double AccruedInterestAmt = -1.0;
         public string Text = null;
 
-        public List<MiscFeeData> MiscFees = null;
+        public MiscFeeData[] MiscFees = null;
 
-        public List<TrdRegTimestampData> TrdRegTimestamps = null;
+        public TrdRegTimestampData[] TrdRegTimestamps = null;
 
         public int MaxPriceLevels = -1;
         public string MDEntryID = null;

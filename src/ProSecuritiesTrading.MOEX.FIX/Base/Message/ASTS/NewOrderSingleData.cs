@@ -24,8 +24,6 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
     {
         public HeaderData Header;
 
-
-
         public NewOrderSingleData(HeaderData header)
         {
             this.Header = header;

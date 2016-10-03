@@ -10,7 +10,6 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Field
         /// '0' (Размещение)
         /// </summary>
         public const byte Value0 = 48;
-        
         /// <summary>
         /// '4' (Снятие)
         /// </summary>
@@ -26,7 +25,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.Base.Field
         /// <summary>
         /// '8' (Отклонение некорректной заявки)
         /// </summary>
-        
+        public const byte Value8 = 56;
         /// <summary>
         /// 'F' (Сделка)
         /// </summary>

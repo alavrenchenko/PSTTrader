@@ -15,14 +15,72 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using ProSecuritiesTrading.MOEX.FIX.Base.Group;
+using ProSecuritiesTrading.MOEX.FIX.Base.Group.Data;
 
 namespace ProSecuritiesTrading.MOEX.FIX.Base.Message.ASTS
 {
     public class OrderMassCancelReportData
     {
+        public byte[] MessageBytes;
+        public HeaderData Header;
+
+        public string ClOrdID = null;
+        public byte[] ClOrdIDBytes = null;
+        public string SecondaryClOrdID = null;
+        public byte[] SecondaryClOrdIDBytes = null;
+        public string OrderID = null;
+        public byte[] OrderIDBytes = null;
+        /// <summary>
+        /// Null: 0.
+        /// </summary>
+        public byte MassCancelRequestType = 0;
+        /// <summary>
+        /// Null: 0.
+        /// </summary>
+        public byte MassCancelResponse = 0;
+        /// <summary>
+        /// Null: -1.
+        /// </summary>
+        public int MassCancelRejectReason = -1;
+        public string TradingSessionID = null;
+        public byte[] TradingSessionIDBytes = null;
+
+        // <Instrument>
+        public string Symbol = null;
+        public byte[] SymbolBytes = null;
+        public int Product = -1;
+        public string CFICode = null;
+        public byte[] CFICodeBytes = null;
+        public string SecurityType = null;
+        public byte[] SecurityTypeBytes = null;
+        // </Instrument>
+
+        public byte Side = 0;
+        public string Account = null;
+        public byte[] AccountBytes = null;
+
+        public PartyData[] Parties = null;
+
+        public string Text = null;
+        /// <summary>
+        /// Null: DateTime.MinValue.
+        /// </summary>
+        public DateTime TransactTime = DateTime.MinValue;
+        /// <summary>
+        /// Null: -1.
+        /// </summary>
+        public int OrigTime = -1;
+
+        // <Trailer>
+        public int CheckSum = -1;
+        // </Trailer>
+
+        public OrderMassCancelReportData(byte[] buffer, HeaderData header)
+        {
+            this.MessageBytes = buffer;
+            this.Header = header;
+        }
     }
 }

@@ -15,10 +15,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using ProSecuritiesTrading.PSTTrader.Core.Adapter;
 using ProSecuritiesTrading.PSTTrader.Core.Base;

@@ -15,10 +15,6 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using ProSecuritiesTrading.PSTTrader.Core.Base;
 
@@ -35,6 +31,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.ASTS
          * UAT Equities or FX Drop Copy = 2
          * */
 
+        public byte MarketType;
         public string[] TargetCompID;
         public string[] IpArray;
         public int[] PortArray;
@@ -47,6 +44,7 @@ namespace ProSecuritiesTrading.MOEX.FIX.ASTS
             base.Provider = PSTTrader.Core.Base.Provider.MOEX_ASTS_FIX;
             base.Ip = "";
             base.Port = 0;
+            this.MarketType = marketType;
 
             if (marketType == 0)
             {
